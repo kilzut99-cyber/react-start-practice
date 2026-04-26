@@ -1,27 +1,25 @@
 import { useState } from 'react';
 
 export default function ResourceCounter() {
-  // ПОЧЕМУ useState(1)? Состояние инкапсулировано внутри компонента,
-  // так как выбор количества ядер — это локальное действие пользователя.
+  /**
+   * ПОЧЕМУ useState? 
+   * Состояние выбора ядер инкапсулировано здесь. Оно не нужно глобальному App, 
+   * пока пользователь не нажмет "Отправить заявку".
+   */
   const [cores, setCores] = useState(1);
 
-  // ПОЧЕМУ prev => prev + 1? Это функциональное обновление. 
-  // Оно гарантирует точность, если пользователь нажмет кнопку 10 раз очень быстро.
+  // PRO: Функциональное обновление — гарантия точности при быстрых кликах
   const add = () => setCores(prev => prev + 1);
-  const remove = () => {
-    // JUNIOR: Защита от логической ошибки (нельзя использовать меньше 1 ядра)
-    if (cores > 1) setCores(prev => prev - 1);
-  };
+  const remove = () => cores > 1 && setCores(prev => prev - 1);
 
   return (
     <div className="counter">
       <p className="counter__value">{cores} Ядер CPU</p>
       <div className="counter__buttons">
-        <button onClick={add}>+</button>
-        <button onClick={remove}>-</button>
+        <button onClick={add}>+1</button>
+        <button onClick={remove}>-1</button>
       </div>
-      {/* PRO: Условный рендеринг предупреждения по достижению лимита */}
-      {cores >= 16 && <p style={{color: 'red'}}>⚠️ Лимит HPC требует согласования!</p>}
+      {cores >= 16 && <p className="warning">⚠️ Требуется согласование лимитов</p>}
     </div>
   );
 }

@@ -1,38 +1,162 @@
+/* src/App.css */
+
+/* ---- ИНТЕГРАЦИЯ СТИЛЕЙ REACT ---- */
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Анимация вращения логотипа в шапке */
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
+    height: 80px; /* Уменьшил для шапки */
+    pointer-events: none;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ---- ИНЖЕНЕРНАЯ ТЁМНАЯ ТЕМА (ТЗ + КУРСОВАЯ) ---- */
+:root {
+  --bg-color: #282c34;        /* Фон из твоего исходника React */
+  --card-bg: #1e293b;         /* Глубокий синий для карточек */
+  --text-main: white;
+  --accent-react: #61dafb;    /* Голубой цвет React-link */
+  --border-color: #334155;
+  --danger-red: #ef4444;
+  --accent-orange: #f59e0b;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+/* ШАПКА В СТИЛЕ REACT-HEADER */
+.app-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* В ряд: лого + текст + селект */
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: space-between;
+  padding: 10px 30px;
+  background-color: #20232a; /* Чуть темнее основного */
+  border-bottom: 2px solid var(--accent-react);
+  margin-bottom: 30px;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: var(--accent-react);
+  margin: 0;
+}
+
+.role-selector select {
+  background: var(--bg-color);
+  color: var(--accent-react);
+  border: 1px solid var(--accent-react);
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* ---- KANBAN-ДОСКА И СЕКЦИИ ---- */
+#board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.column {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 500px;
+  border: 1px solid var(--border-color);
+}
+
+.column-title {
+  color: var(--accent-react);
+  border-bottom: 1px solid var(--accent-react);
+  padding-bottom: 10px;
+}
+
+/* КАРТОЧКИ Simulation_Request */
+.task-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent-react);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  text-align: left;
+  transition: transform 0.2s;
+}
+
+.task-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(97, 218, 251, 0.3);
+}
+
+.task-card.priority-high {
+  border-left-color: var(--danger-red);
+}
+
+/* КНОПКИ ДЕЙСТВИЙ */
+.card-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.card-actions button {
+  flex: 1;
+  background: transparent;
+  color: var(--accent-react);
+  border: 1px solid var(--accent-react);
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card-actions button:hover {
+  background: rgba(97, 218, 251, 0.1);
+}
+
+.card-actions .btn-danger {
+  color: var(--danger-red);
+  border-color: var(--danger-red);
+}
+
+/* СЧЕТЧИК ЯДЕР */
+.counter__value {
+  font-size: 2rem;
+  color: var(--accent-orange);
+}
+
+.search-bar__input {
+  width: 100%;
+  padding: 10px;
+  background: #1e1e1e;
+  border: 1px solid var(--accent-react);
   color: white;
+  border-radius: 5px;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.warning {
+  color: var(--accent-orange);
+  font-weight: bold;
 }
