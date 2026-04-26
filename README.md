@@ -1,70 +1,80 @@
-# Getting Started with Create React App
+# 📝 Практическая работа №10: React SPA — Менеджер системы виртуальных испытаний
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🎯 Цель работы
+Научиться создавать компонентную архитектуру на библиотеке **React.js**, освоить передачу данных через **Props**, управление состоянием через хук **useState**, а также реализовать интерактивный интерфейс с фильтрацией данных и ролевой моделью доступа для проекта «Консалтинговый центр».
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🛠 Используемые технологии
 
-### `npm start`
+### 1. Ядро и Фреймворк
+*   **React 18**: использование функциональных компонентов и хуков.
+*   **JSX**: совмещение логики JavaScript и верстки в одном файле.
+*   **React Scripts**: автоматизация сборки и запуска проекта.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 2. Управление данными и состоянием
+*   **useState Hook**: создание реактивных переменных для поиска и счётчика ресурсов.
+*   **Props & Destructuring**: чистая передача инженерных данных из БД в интерфейс.
+*   **Array Methods (.map, .filter)**: динамическая отрисовка реестра заявок и поиск «на лету».
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 3. Инженерная логика (Курсовой проект)
+*   **RBAC Logic**: имитация разграничения прав доступа (Конструктор/Консультант).
+*   **HPC Management**: логика управления вычислительными узлами кластера.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 👤 Студент
+*   **Имя:** Александр Зализко
+*   **Курсовой проект:** Разработка системы управления заявками на виртуальные испытания (Консалтинговый центр)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🚀 Выполненные уровни (Checklist)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### **🟢 Уровень БАЗА (60%)**
+- [x] **Компонентный подход**: Создан переиспользуемый компонент `SimulationRequestCard`.
+- [x] **Использование Props**: Данные (ID, Title, Physics) передаются через деструктуризацию.
+- [x] **JSX Syntax**: Соблюдены правила разметки (закрытые теги, `className`).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **🟡 Уровень JUNIOR (80%)**
+- [x] **Рендеринг списков**: Реестр заявок отрисован через `.map()` с уникальными `key`.
+- [x] **State (Counter)**: Реализован счётчик ядер CPU с защитой от отрицательных значений.
+- [x] **Conditional Rendering**: Внедрена цветовая индикация приоритетов (Critical/High).
 
-### `npm run eject`
+### **🔴 Уровень PRO (100%)**
+- [x] **Controlled Components**: Поиск по базе заявок полностью управляется через `useState`.
+- [x] **RBAC (Role Model)**: Интерфейс динамически меняется под роли пользователей.
+- [x] **Надежность**: Использовано функциональное обновление стейта (`prev => prev + 1`).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 💬 Interview Corner (Ответы на вопросы)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+> **1. Чем компонент отличается от обычной JS-функции?**
+> Компонент React возвращает **JSX** и может управлять состоянием (**state**), сохраняя данные между рендерами.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+> **2. Что такое props? Можно ли их изменять?**
+> **Props** — входные данные, передаваемые «сверху». Они доступны только для чтения (**immutable**). Изменение props внутри компонента запрещено.
 
-## Learn More
+> **3. Почему нельзя писать `count = count + 1`?**
+> Прямое присваивание не инициирует перерисовку UI. Только вызов `setCount()` уведомляет React об изменениях.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> **4. Чем JSX отличается от HTML?**
+> 1. `class` -> `className`. 2. Обязательное закрытие всех тегов. 3. JS-логика внутри `{ }`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🏗 Декомпозиция проекта
+1.  **App (Root)** — Хранит массив заявок и текущую роль пользователя.
+2.  **SimulationRequestCard** — Карточка объекта испытаний (LOD-индекс, параметры модели).
+3.  **ResourceCounter** — Панель управления мощностями HPC (ядра, RAM).
+4.  **SearchBar** — Управляемый фильтр для поиска по ID или названию.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 📸 Скриншоты выполнения
+![Интерфейс системы](screenshots/screen1.png)
+*Рисунок 1 — Режим Консультанта КЦ: управление реестром.*
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Фильтрация данных](screenshots/screen2.png)
+*Рисунок 2 — Работа поиска и фильтрации заявок.*
