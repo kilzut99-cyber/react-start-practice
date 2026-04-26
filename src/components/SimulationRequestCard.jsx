@@ -1,35 +1,30 @@
-/**
- * ПОЧЕМУ деструктуризация? ({ id, title... })
- * Это позволяет сразу видеть интерфейс данных компонента и избавляет от 
- * дублирования слова 'props.' во всем коде, что улучшает читаемость.
- */
+// ПОЧЕМУ деструктуризация? Мы сразу объявляем переменные из объекта props.
+// Это избавляет от повторений слова "props.title", делая код чище.
 export default function SimulationRequestCard({ id, title, status, priority, physics, role }) {
   
-  // Формируем класс для стилизации приоритета (Critical, High и т.д.)
+  // Создаем динамический класс. В Лекции (стр. 12) сказано: UI зависит от данных.
   const priorityClass = `badge priority-${priority?.toLowerCase()}`;
 
   return (
     <div className="course-card">
-      {/* Условный рендеринг бейджа приоритета (Уровень JUNIOR) */}
+      {/* JUNIOR: Условный рендеринг: бейдж рисуется только если есть приоритет */}
       {priority && <span className={priorityClass}>{priority}</span>}
       
-      <h3 className="course-card__title">ID: {id}</h3>
-      <p>Изделие: <strong>{title}</strong></p>
-      <p>Физика процесса: {physics}</p>
-
-      {/* Логика кнопок согласно матрице прав доступа из курсовой */}
+      <h3 className="course-card__title">Заявка: {id}</h3>
+      <p>Объект испытаний: <strong>{title}</strong></p>
+      <p>Тип физики: {physics}</p>
+      
+      {/* PRO: RBAC Модель (Матрица прав доступа из вашего ТЗ) */}
       <div className="card-actions">
-        {role === 'Client_Engineer' && status === 'DRAFT' && (
-          <button onClick={() => alert('Редактирование ТЗ')}>✏️ Изменить ТЗ</button>
-        )}
+        {/* Конструктор видит правку только на черновиках */}
+        {role === 'Client_Engineer' && status === 'DRAFT' && <button>Изменить ТЗ</button>}
         
-        {role === 'Consultant' && (
-          <button onClick={() => alert('Назначение ИЦ')}>⚖️ Выбрать ИЦ</button>
-        )}
+        {/* Консультант видит кнопку управления всегда */}
+        {role === 'Consultant' && <button>Назначить ИЦ</button>}
       </div>
-
-      {/* Условный текст, если статус не указан */}
-      <small className="status-tag">Статус: {status || 'Обработка ОРИ...'}</small>
+      
+      {/* Условный текст: если статуса нет, пишем "НОВАЯ" */}
+      <small className="status-tag">Статус: {status || 'НОВАЯ'}</small>
     </div>
   );
 }
