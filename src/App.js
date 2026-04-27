@@ -1,137 +1,103 @@
-// 1. ИМПОРТЫ
-// ПОЧЕМУ useState? Нужен для создания реактивных переменных (состояния).
-// ПОЧЕМУ useEffect? Нужен для синхронизации данных с LocalStorage (побочный эффект).
-import { useState, useEffect } from 'react'; 
-// ПОЧЕМУ logo? Импортируем SVG как объект, чтобы React мог вставить его в DOM.
-import logo from './logo.svg';    
-// Импорт дочерних компонентов (принцип декомпозиции: разделяй и властвуй).
-import SimulationRequestCard from './components/SimulationRequestCard'; 
-import ResourceCounter from './components/ResourceCounter';         
-// Подключение CSS-стилей (включая темную тему и анимацию логотипа).
-import './App.css';               
+import { useState, useEffect } from 'react';
+import SimulationRequestCard from './components/SimulationRequestCard';
+import ResourceCounter from './components/ResourceCounter';
+import './App.css';
 
-// Исходные данные для первого запуска (имитация строк из твоей БД).
+// Начальные данные (Mock-объекты для демонстрации темы курсовой)
 const INITIAL_DATA = [
-  { id: 'REQ-001', title: 'Турбина ВД', physics: 'CFD', priority: 'high', status: 'todo' },
-  { id: 'REQ-002', title: 'Опора вала', physics: 'Механика', priority: 'medium', status: 'in-progress' },
-  { id: 'REQ-003', title: 'Корпус КЦ', physics: 'Теплообмен', priority: 'low', status: 'done' },
+  { id: 'REQ-01', title: 'Ротор двигателя', physics: 'Механика', priority: 'high', status: 'todo' },
+  { id: 'REQ-02', title: 'Охлаждение ТВД', physics: 'Теплообмен', priority: 'medium', status: 'in-progress' },
+  { id: 'REQ-03', title: 'Входной конус', physics: 'CFD', priority: 'low', status: 'done' },
 ];
 
 export default function App() {
-  // 2. СОСТОЯНИЯ (STATE)
-  /**
-   * ПОЧЕМУ такая инициализация? Это "ленивая" загрузка. 
-   * При запуске React проверяет localStorage. Если там есть сохраненные задачи — 
-   * берет их (через JSON.parse), иначе берет INITIAL_DATA.
-   */
+  // Инициализация задач: ленивая загрузка из LocalStorage
   const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem('kc_tasks_v1');
+    const saved = localStorage.getItem('hpc_manager_v2');
     return saved ? JSON.parse(saved) : INITIAL_DATA;
   });
 
-  // Состояние для роли (RBAC) и поискового запроса (Controlled Input).
-  const [role, setRole] = useState('Consultant');
-  const [query, setQuery] = useState('');
+  const [role, setRole] = useState('Consultant'); // Состояние роли (RBAC)
+  const [query, setQuery] = useState('');         // Состояние поиска (Управляемый инпут)
 
-  // 3. ЭФФЕКТЫ (SIDE EFFECTS)
   /**
-   * ПОЧЕМУ useEffect? Он следит за массивом [tasks]. 
-   * Как только любая карточка перемещена или удалена, эффект срабатывает 
-   * и перезаписывает базу в localStorage (превращая массив в строку JSON).
+   * ПОЧЕМУ useEffect?
+   * Он используется как "наблюдатель" за массивом [tasks]. Как только любая карточка 
+   * меняет статус или удаляется, эффект автоматически сохраняет актуальный реестр 
+   * в память браузера (localStorage), обеспечивая сохранность данных проекта.
    */
   useEffect(() => {
-    localStorage.setItem('kc_tasks_v1', JSON.stringify(tasks));
+    localStorage.setItem('hpc_manager_v2', JSON.stringify(tasks));
   }, [tasks]);
 
-  // 4. ВЫЧИСЛЯЕМАЯ ЛОГИКА (UI = f(state))
-  /**
-   * ПОЧЕМУ фильтрация здесь? Это "реактивный" поиск. 
-   * Переменная пересчитывается автоматически при каждом рендере, если изменился query.
-   */
-  const filteredTasks = tasks.filter(t => 
+  // Реактивная фильтрация: пересчитывается автоматически при каждом вводе в поиск
+  const filteredTasks = tasks.filter(t =>
     t.title.toLowerCase().includes(query.toLowerCase()) || 
     t.id.toLowerCase().includes(query.toLowerCase())
   );
 
-  // 5. ОБРАБОТЧИКИ СОБЫТИЙ (HANDLERS)
-  // Логика перемещения карточки между колонками Kanban.
+  // Обработчик движения карточки по этапам жизненного цикла
   const moveTask = (id, direction) => {
-    const ORDER = ['todo', 'in-progress', 'done']; // Массив этапов ЖЦ задачи.
-    // Используем .map() для создания НОВОГО массива (соблюдаем ТАБУ на мутации).
+    const STAGES = ['todo', 'in-progress', 'done'];
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
-        const nextIdx = ORDER.indexOf(t.status) + (direction === 'next' ? 1 : -1);
-        // Проверка: не выходим ли мы за пределы первой/последней колонки.
-        if (nextIdx >= 0 && nextIdx < ORDER.length) {
-          return { ...t, status: ORDER[nextIdx] }; // Возвращаем копию с новым статусом.
+        const nextIdx = STAGES.indexOf(t.status) + (direction === 'next' ? 1 : -1);
+        if (nextIdx >= 0 && nextIdx < STAGES.length) {
+          return { ...t, status: STAGES[nextIdx] }; // Возврат нового объекта (Immutability)
         }
       }
-      return t; // Остальные задачи возвращаем "как есть".
+      return t;
     }));
   };
 
-  // Удаление задачи с подтверждением.
+  // Удаление задачи с системным подтверждением
   const deleteTask = (id) => {
-    if (window.confirm('Удалить заявку из реестра КЦ?')) {
-      // .filter() создает новый массив, в котором нет элемента с этим ID.
+    if (window.confirm(`Вы уверены, что хотите удалить заявку ${id}?`)) {
       setTasks(prev => prev.filter(t => t.id !== id));
     }
   };
 
-  // 6. ОТРИСОВКА (JSX)
   return (
     <div className="App">
-      {/* ШАПКА: Логотип + Заголовок + Выбор Роли */}
       <header className="app-header">
-        <div className="header-brand">
-          <img src={logo} className="App-logo" alt="logo" /> {/* Анимированный логотип React */}
-          <h1>ЦК: Управление испытаниями</h1>
-        </div>
-        <div className="role-selector">
-          <label>Режим доступа: </label>
-          {/* Управляемый select: его значение привязано к стейту role */}
+        <h1>ЦК: Управление симуляциями</h1>
+        <div className="role-box">
+          <label>Доступ: </label>
+          {/* Управляемый компонент (select) связанный со стейтом role */}
           <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="Consultant">Консультант (Админ)</option>
-            <option value="Client_Engineer">Конструктор (Просмотр)</option>
+            <option value="Client_Engineer">Инженер (Просмотр)</option>
           </select>
         </div>
       </header>
 
-      <main className="app-main">
-        {/* БЛОК HPC: Демонстрация локального useState в дочернем компоненте */}
-        <section className="section">
-          <h2>💻 Вычислительные ресурсы кластера</h2>
-          <ResourceCounter />
-        </section>
+      <main className="container">
+        {/* Блок настройки ресурсов (инкапсулированный стейт) */}
+        <ResourceCounter />
 
-        {/* ПОИСК: Демонстрация управляемого инпута (Controlled Component) */}
-        <section className="section">
+        <section className="search-area">
           <input 
-            className="search-bar__input" 
-            placeholder="Поиск по ID (REQ-...) или объекту..."
-            value={query} 
-            onChange={(e) => setQuery(e.target.value)} // Синхронизируем ввод со стейтом.
+            className="search-input"
+            placeholder="Поиск по ID или объекту..." 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)} // Синхронизация инпута со стейтом
           />
-          <small>Найдено результатов: {filteredTasks.length}</small>
         </section>
 
-        {/* КАНБАН-ДОСКА: Рендеринг списков через .map() */}
-        <div id="board">
-          {['todo', 'in-progress', 'done'].map(columnStatus => (
-            <div key={columnStatus} className="column">
-              <h3 className="column-title">
-                {/* Условное отображение заголовка колонки */}
-                {columnStatus === 'todo' ? '📋 План' : columnStatus === 'in-progress' ? '⚙️ В работе' : '✅ Готово'}
-              </h3>
+        <div className="kanban-grid">
+          {/* Динамический рендеринг колонок */}
+          {['todo', 'in-progress', 'done'].map(stage => (
+            <div key={stage} className="kanban-column">
+              <h3>{stage === 'todo' ? '📋 Очередь' : stage === 'in-progress' ? '⚙️ В расчёте' : '✅ Результат'}</h3>
               <div className="task-list">
-                {/* Отрисовываем только те задачи, чья стадия совпадает с колонкой */}
-                {filteredTasks.filter(t => t.status === columnStatus).map(task => (
+                {/* Отрисовка карточек с использованием УНИКАЛЬНОГО ID как ключа */}
+                {filteredTasks.filter(t => t.status === stage).map(task => (
                   <SimulationRequestCard 
-                    key={task.id}   // ОБЯЗАТЕЛЬНО: уникальный ключ для оптимизации React.
-                    {...task}       // Spread-оператор: прокидываем все свойства объекта сразу.
-                    role={role}     // Передаем роль для настройки прав внутри карточки.
-                    onMove={moveTask} 
-                    onDelete={deleteTask} 
+                    key={task.id} // ПОЧЕМУ? Чтобы React не пересоздавал весь список при фильтрации
+                    {...task}    // Прокидываем все свойства объекта сразу (Spread)
+                    role={role}
+                    onMove={moveTask}
+                    onDelete={deleteTask}
                   />
                 ))}
               </div>
